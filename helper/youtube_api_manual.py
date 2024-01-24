@@ -8,7 +8,8 @@ import isodate
 
 
 # YT_API_KEY скопирован из гугла и вставлен в переменные окружения
-api_key: str = os.getenv('YT_API_KEY')
+# api_key: str = os.getenv('YT_API_KEY')
+api_key: str = os.getenv("YOUTUBE_API_KEY")
 
 # создать специальный объект для работы с API
 youtube = build('youtube', 'v3', developerKey=api_key)
@@ -40,9 +41,9 @@ playlists = youtube.playlists().list(channelId=channel_id,
                                      maxResults=50,
                                      ).execute()
 # printj(playlists)
-for playlist in playlists['items']:
-    print(playlist)
-    print()
+# for playlist in playlists['items']:
+#     print(playlist)
+#     print()
 
 
 '''
