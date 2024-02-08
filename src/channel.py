@@ -1,18 +1,15 @@
-import os
 import json
 
-from googleapiclient.discovery import build
+from src.service import Service
 
 
-class Channel:
+class Channel(Service):
     """Класс для ютуб-канала"""
-    api_key: str = os.getenv("YOUTUBE_API_KEY")
-    youtube = build('youtube', 'v3', developerKey=api_key)
 
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.__channel_id = channel_id
-        self.channel = self.youtube.channels().list(id=self.__channel_id, part='snippet,statistics').execute()
+        self.channel = self.get_service().channels().list(id=self.__channel_id, part='snippet,statistics').execute()
         self.title = self.channel['items'][0]['snippet']['title']
         self.description = self.channel['items'][0]['snippet']['description']
         self.url = f"https://www.youtube.com/channel/{self.__channel_id}"
@@ -42,11 +39,6 @@ class Channel:
     def channel_id(self):
         """Возвращает id канала"""
         return self.__channel_id
-
-    @classmethod
-    def get_service(cls):
-        """Возвращает объект для работы с YouTube API"""
-        return cls.youtube
 
     def __str__(self):
         return f'{self.title} ({self.url})'
