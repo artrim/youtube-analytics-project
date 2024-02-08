@@ -1,29 +1,26 @@
-import os
-
 import isodate
-from googleapiclient.discovery import build
+
 from datetime import timedelta
 
+from src.service import Service
 
-class PlayList:
 
-    api_key: str = os.getenv("YOUTUBE_API_KEY")
-    youtube = build('youtube', 'v3', developerKey=api_key)
+class PlayList(Service):
 
     def __init__(self, playlist_id):
         self.playlist_id = playlist_id
         self.url = f"https://www.youtube.com/playlist?list={self.playlist_id}"
-        self.playlist_videos = self.youtube.playlists().list(
+        self.playlist_videos = self.get_service().playlists().list(
             part='snippet',
             id=playlist_id
         ).execute()
         self.title = self.playlist_videos['items'][0]['snippet']['title']
-        self.playlist_videos = self.youtube.playlistItems().list(playlistId=self.playlist_id,
+        self.playlist_videos = self.get_service().playlistItems().list(playlistId=self.playlist_id,
                                                             part='contentDetails',
                                                             maxResults=50,
                                                             ).execute()
         self.video_ids: list[str] = [video['contentDetails']['videoId'] for video in self.playlist_videos['items']]
-        self.video_response = self.youtube.videos().list(part='contentDetails,statistics',
+        self.video_response = self.get_service().videos().list(part='contentDetails,statistics',
                                                     id=','.join(self.video_ids)
                                                     ).execute()
 
